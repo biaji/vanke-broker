@@ -1,18 +1,18 @@
 // ==UserScript==
-// @name     vanke-broker
+// @name     万科购房脚本
 // @version  0.1
 // @grant    none
 // @match        http://fang.vanke.com/*
-// @require        https://libs.baidu.com/jquery/2.1.1/jquery.js
+//require        https://libs.baidu.com/jquery/2.1.1/jquery.js
 // ==/UserScript==
 
 var wantedList = [3004, 3002, 3001,
-    2904, 2902, 2901,
-    2804, 2802, 2801,
-    2704, 2702, 2701,
-    3104, 3102, 3101,
-    3204, 3202, 3201
-];
+                  2904, 2902, 2901,
+                  2804, 2802, 2801,
+                  2704, 2702, 2701,
+                  3104, 3102, 3101,
+                  3204, 3202, 3201
+                 ];
 
 var roomSelected;
 
@@ -36,7 +36,6 @@ function wkgo() {
             if (roomSelected == roomNum) {
                 console.log("Already: " + roomNum);
                 list[j].click();
-                step1();
             }
         }
         roomSelected = 0;
@@ -50,7 +49,6 @@ function wkgo() {
                 console.log("Got: " + roomNum);
                 roomSelected = roomNum;
                 list[j].click();
-                step1();
             }
         }
     }
@@ -59,28 +57,9 @@ function wkgo() {
     for (var i = 0; !roomSelected && i < list.size(); i++) {
         if (isWanted(list[i].text)) {
             list[i].click();
-            step1();
             break;
         }
     }
-};
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function step1() {
-    console.log('step1...');
-    await sleep(500);
-    $("a.quick_price").click();
-    console.log($("a.quick_price").text);
-    step2();
-}
-
-async function step2() {
-    console.log('step2...');
-    await sleep(500);
-    console.log($("a.btn.btn-default.btn-primary").text);
 }
 
 
@@ -105,9 +84,9 @@ function start() {
     //修改流拍按钮为入口
     $(".target_ylp").empty();
     $(".target_ylp").append("<a href='#' onClick='wkgo()'>GO！！</a>");
-};
+}
 
-start()
+start();
 
 document.addEventListener(
     'keydown',
@@ -119,3 +98,28 @@ document.addEventListener(
     },
     false
 );
+
+$(document).ajaxComplete(function (){
+    //step1:
+    if($("a.quick_price").length != 0){
+        $("a.quick_price").click();
+    }
+
+    //step2:
+    if($("a.btn.btn-default.btn-primary").length != 0){
+        $("a.btn.btn-default.btn-primary").click();
+    }
+
+
+    //DEMO
+    if($("a.quick_price").length != 0){
+        console.log($("a.quick_price"));
+    }else{
+        console.log("NOT THIS");
+    }
+    if($(".quick_price_success").length != 0){
+        console.log("GOGOGGOGO");
+    }else {
+        console.log("LOST");
+    }
+});
