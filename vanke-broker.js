@@ -13,26 +13,41 @@ var wantedList = [3004, 3002, 3001,
                   3104, 3102, 3101,
                   3204, 3202, 3201
                  ];
+// 6 号楼
+var isSix = true;
 
 var roomSelected;
 
+
 function wkgo() {
+
+
+    var tag = $(".thumbnail.red.size24");
+
+    if(tag.size()>0){
+        if(isSix){
+            tag[0].click();
+        }else{
+            tag[1].click();
+        }
+    }
+
     var list = $(".status2");
     if (roomSelected) {
         for (var i = 0; i < list.size(); i++) {
-            var roomNum = trimRoomNum(list[j].text);
+            var roomNum = trimRoomNum(list[i].text);
             if (roomSelected == roomNum) {
                 console.log("Already: " + roomNum);
-                list[j].click();
+                list[i].click();
             }
         }
         roomSelected = 0;
     }
 
     // 首先优选指定房号
-    for (var j = 0; !roomSelected && j < list.size(); j++) {
-        var roomNum = trimRoomNum(list[j].text);
-        for (var i = 0; i < wantedList.length; i++) {
+    for (var i = 0; !roomSelected && i < wantedList.length; i++) {
+        for (var j = 0;  j < list.size(); j++) {
+            var roomNum = trimRoomNum(list[j].text);
             if (wantedList[i] == roomNum) {
                 console.log("Got: " + roomNum);
                 roomSelected = roomNum;
@@ -53,8 +68,7 @@ function wkgo() {
 function trimRoomNum(coarse){
     var tmp = coarse.trim();
     var exact = tmp.substr(0, tmp.indexOf("("));
-    var building = $("a.nametd.current")[0].text.trim();
-    if(building.startsWith("6")){
+    if(isSix){
         exact = tmp.substr(tmp.indexOf("-") + 1, tmp.indexOf("(")-2);
     }
     return exact;
@@ -101,25 +115,20 @@ document.addEventListener(
 $(document).ready(wkgo());
 
 $(document).ajaxComplete(function (){
-    //step1:
-    if($("a.quick_price").length != 0){
-        $("a.quick_price").click();
+
+    if($(".messenger-message.message.alert.error.message-error.alert-error:visible").length > 0){
+        return;
     }
 
     //step2:
-    if($("a.btn.btn-default.btn-primary").length != 0){
-        $("a.btn.btn-default.btn-primary").click();
+    if($("a.btn.btn-default.btn-primary").length > 0){
+        $("a.btn.btn-default.btn-primary")[0].click();
+        return;
     }
 
-    //DEMO
+    //step1:
     if($("a.quick_price").length != 0){
-        console.log($("a.quick_price"));
-    }else{
-        console.log("NOT THIS");
+        $("a.quick_price")[0].click();
     }
-    if($(".quick_price_success").length != 0){
-        console.log("GOGOGGOGO");
-    }else {
-        console.log("LOST");
-    }
+
 });
