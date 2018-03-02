@@ -18,9 +18,16 @@ var isSix = true;
 
 var roomSelected;
 
+var step1 = false;
+
+var step2 = false;
+
 
 function wkgo() {
 
+    // init
+    step1 = false;
+    step2 = false;
 
     var tag = $(".thumbnail.red.size24");
 
@@ -75,7 +82,7 @@ function trimRoomNum(coarse){
 }
 
 
-// 判断是否是需要的房 需要进一步实现房号
+// 判断是否是需要的房
 function isWanted(number) {
     console.log("number:" + number);
     return false;
@@ -121,14 +128,16 @@ $(document).ajaxComplete(function (){
     }
 
     //step2:
-    if($("a.btn.btn-default.btn-primary").length > 0){
+    if(!step2 && $("a.btn.btn-default.btn-primary").length > 0){
         $("a.btn.btn-default.btn-primary")[0].click();
+        step2 = true;
         return;
     }
 
     //step1:
-    if($("a.quick_price").length != 0){
+    if(!step1 && $("a.quick_price").length != 0){
         $("a.quick_price")[0].click();
+        step1 = true;
     }
 
 });
