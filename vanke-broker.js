@@ -18,21 +18,9 @@ var roomSelected;
 
 function wkgo() {
     var list = $(".status2");
-
-    if ($("a.btn.btn-default.btn-primary") && $("a.btn.btn-default.btn-primary").is(':visible') == true) {
-        console.log("GGGGGGGOOOOOOOTTTTT" + $("a.btn.btn-default.btn-primary").text);
-        return;
-    }
-
-    if ($("a.quick_price") && $("a.quick_price").is(':visible') == true) {
-        console.log("click 1");
-        $("a.quick_price").click();
-        return;
-    }
-
     if (roomSelected) {
         for (var i = 0; i < list.size(); i++) {
-            var roomNum = parseInt(list[j].text.trim().substr(0, 4), 10);
+            var roomNum = trimRoomNum(list[j].text);
             if (roomSelected == roomNum) {
                 console.log("Already: " + roomNum);
                 list[j].click();
@@ -43,7 +31,7 @@ function wkgo() {
 
     // 首先优选指定房号
     for (var j = 0; !roomSelected && j < list.size(); j++) {
-        var roomNum = parseInt(list[j].text.trim().substr(0, 4), 10);
+        var roomNum = trimRoomNum(list[j].text);
         for (var i = 0; i < wantedList.length; i++) {
             if (wantedList[i] == roomNum) {
                 console.log("Got: " + roomNum);
@@ -62,10 +50,21 @@ function wkgo() {
     }
 }
 
+function trimRoomNum(coarse){
+    var tmp = coarse.trim();
+    var exact = tmp.substr(0, tmp.indexOf("("));
+    var building = $("a.nametd.current")[0].text.trim();
+    if(building.startsWith("6")){
+        exact = tmp.substr(tmp.indexOf("-") + 1, tmp.indexOf("(")-2);
+    }
+    return exact;
+}
+
 
 // 判断是否是需要的房 需要进一步实现房号
 function isWanted(number) {
     console.log("number:" + number);
+    return false;
     var roomNum = parseInt(number.trim().substr(0, 4), 10);
     var floorNum = parseInt(number.trim().substr(0, 2), 10);
     console.log("number:" + roomNum);
@@ -99,6 +98,8 @@ document.addEventListener(
     false
 );
 
+$(document).ready(wkgo());
+
 $(document).ajaxComplete(function (){
     //step1:
     if($("a.quick_price").length != 0){
@@ -109,7 +110,6 @@ $(document).ajaxComplete(function (){
     if($("a.btn.btn-default.btn-primary").length != 0){
         $("a.btn.btn-default.btn-primary").click();
     }
-
 
     //DEMO
     if($("a.quick_price").length != 0){
