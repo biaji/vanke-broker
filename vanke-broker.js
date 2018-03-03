@@ -105,15 +105,17 @@ function isWanted(number) {
 
 function start() {
     timeLeft = timeLeft -TIMER_SLICE;
-    if(timeLeft > 1000 *30){
+    if(timeLeft > 120000){
         $(".target_ylp").empty();
-        $(".target_ylp").append("<a href='#' onClick='wkgo()' class='red size24'>"+(timeLeft/1000).toFixed(2)+"</a>");
-    }else if(timeLeft <= 50) {
+        $(".target_ylp").append("<a href='#' onClick='wkgo()' class='red size24'>"+Math.floor(timeLeft/1000)+"</a>");
+    }else if(timeLeft <= 150) {
+        wkgo();
+    } else if (timeLeft < 50){
         clearInterval(timerId);
         wkgo();
     } else {
         $(".target_ylp").empty();
-        $(".target_ylp").append("<a href='#' onClick='wkgo() class='red size24''>"+Math.floor(timeLeft/1000)+"</a>");
+        $(".target_ylp").append("<a href='#' onClick='wkgo() class='red size24''>"+(timeLeft/1000).toFixed(2)+"</a>");
     }
 }
 
@@ -143,7 +145,10 @@ document.addEventListener(
 
 $(document).ready(syncTime());
 
-$(document).ajaxComplete(function (event, request, settings){
+//$(document).ajaxComplete(function (event, request, settings){
+
+$(document).ajaxSuccess(function (event, request, settings){
+    console.log("complete");
     if($("a.add_price_over").length != 0){
         wantedList.shift();
         console.log(roomSelected + " failed" );
@@ -155,6 +160,10 @@ $(document).ajaxComplete(function (event, request, settings){
     }
 
     if(done){
+        return;
+    }
+
+    if($("a.add_price_start").length > 0){
         return;
     }
 
