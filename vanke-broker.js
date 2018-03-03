@@ -121,7 +121,7 @@ function start() {
 
 function syncTime(){
     var requestTime = new Date();
-    var tmpSrvTime =  new Date($.ajax({url:"/favicon.ico", async: false}).getResponseHeader("Date"));
+    var tmpSrvTime =  new Date($.ajax({async: false}).getResponseHeader("Date"));
     var endTime = new Date();
     var transferTime = Math.floor((endTime-requestTime)/3*2); //取三分之二
     var offset = endTime - tmpSrvTime - transferTime;
