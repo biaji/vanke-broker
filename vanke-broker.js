@@ -13,6 +13,9 @@ var wantedList = [3004, 3002, 3001,
                   3104, 3102, 3101,
                   3204, 3202, 3201
                  ];
+
+const TARGET_TIME = new Date("2018-03-03 11:30");
+
 // 6 号楼
 var isSix = true;
 
@@ -22,22 +25,22 @@ var step1 = false;
 
 var step2 = false;
 
+var done = false;
+
+const TIMER_SLICE = 50;
+
+// 定时器
+var timerId;
+
+// 剩余时间
+var timeLeft;
+
 
 function wkgo() {
-
+    console.log("GOGOGO");
     // init
     step1 = false;
     step2 = false;
-
-    var tag = $(".thumbnail.red.size24");
-
-    if(tag.size()>0){
-        if(isSix){
-            tag[0].click();
-        }else{
-            tag[1].click();
-        }
-    }
 
     var list = $(".status2");
     if (roomSelected) {
@@ -56,7 +59,7 @@ function wkgo() {
         for (var j = 0;  j < list.size(); j++) {
             var roomNum = trimRoomNum(list[j].text);
             if (wantedList[i] == roomNum) {
-                console.log("Got: " + roomNum);
+                console.log("Try: " + roomNum);
                 roomSelected = roomNum;
                 list[j].click();
             }
@@ -101,12 +104,30 @@ function isWanted(number) {
 }
 
 function start() {
-    //修改流拍按钮为入口
-    $(".target_ylp").empty();
-    $(".target_ylp").append("<a href='#' onClick='wkgo()'>GO！！</a>");
+    timeLeft = timeLeft -TIMER_SLICE;
+    if(timeLeft > 1000 *30){
+        $(".target_ylp").empty();
+        $(".target_ylp").append("<a href='#' onClick='wkgo()' class='red size24'>"+(timeLeft/1000).toFixed(2)+"</a>");
+    }else if(timeLeft <= 50) {
+        clearInterval(timerId);
+        wkgo();
+    } else {
+        $(".target_ylp").empty();
+        $(".target_ylp").append("<a href='#' onClick='wkgo() class='red size24''>"+Math.floor(timeLeft/1000)+"</a>");
+    }
 }
 
-start();
+function syncTime(){
+    var requestTime = new Date();
+    var tmpSrvTime =  new Date($.ajax({url:"/favicon.ico", async: false}).getResponseHeader("Date"));
+    var endTime = new Date();
+    var transferTime = Math.floor((endTime-requestTime)/3*2); //取三分之二
+    var offset = endTime - tmpSrvTime - transferTime;
+    timeLeft = TARGET_TIME - tmpSrvTime - transferTime - TIMER_SLICE;
+    console.log("transfer: " + transferTime + " offset: " + offset);
+    timerId =  setInterval(start, TIMER_SLICE);
+}
+
 
 document.addEventListener(
     'keydown',
@@ -119,9 +140,23 @@ document.addEventListener(
     false
 );
 
-$(document).ready(wkgo());
 
-$(document).ajaxComplete(function (){
+$(document).ready(syncTime());
+
+$(document).ajaxComplete(function (event, request, settings){
+    if($("a.add_price_over").length != 0){
+        wantedList.shift();
+        console.log(roomSelected + " failed" );
+        roomSelected = null;
+        step1 = false;
+        step2 = false;
+        wkgo();
+        return;
+    }
+
+    if(done){
+        return;
+    }
 
     if($(".messenger-message.message.alert.error.message-error.alert-error:visible").length > 0){
         return;
