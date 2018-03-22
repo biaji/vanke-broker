@@ -6,15 +6,14 @@
 //require        https://libs.baidu.com/jquery/2.1.1/jquery.js
 // ==/UserScript==
 
-var wantedList = [3004, 3002, 3001,
+var wantedList = [3204, 3004, 3201, 3202, 3002, 3001,
                   2904, 2902, 2901,
                   2804, 2802, 2801,
                   2704, 2702, 2701,
-                  3104, 3102, 3101,
-                  3204, 3202, 3201
+                  3104, 3102, 3101
                  ];
 
-const TARGET_TIME = new Date("2018-03-03 11:30");
+const TARGET_TIME = new Date("2018-03-03 17:00");
 
 // 6 号楼
 var isSix = true;
@@ -88,16 +87,8 @@ function trimRoomNum(coarse){
 // 判断是否是需要的房
 function isWanted(number) {
     console.log("number:" + number);
-    return false;
     var roomNum = parseInt(number.trim().substr(0, 4), 10);
     var floorNum = parseInt(number.trim().substr(0, 2), 10);
-    console.log("number:" + roomNum);
-    for (var j = 0; j < wantedList.length; j++) {
-        if (roomNum == wantedList[j]) {
-            roomSelected = roomNum;
-            return true;
-        }
-    }
 
     if (floorNum > 24 && floorNum < 34) return true;
     return false;
