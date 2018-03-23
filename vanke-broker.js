@@ -1,19 +1,14 @@
 // ==UserScript==
 // @name     万科购房脚本
-// @version  0.1
+// @version  0.2
 // @grant    none
 // @match        http://fang.vanke.com/*
 //require        https://libs.baidu.com/jquery/2.1.1/jquery.js
 // ==/UserScript==
 
-var wantedList = [3204, 3004, 3201, 3202, 3002, 3001,
-                  2904, 2902, 2901,
-                  2804, 2802, 2801,
-                  2704, 2702, 2701,
-                  3104, 3102, 3101
-                 ];
+var wantedList = [2602,2603,1601,3301,2702,2703,2502,2503];
 
-const TARGET_TIME = new Date("2018-03-03 17:00");
+const TARGET_TIME = new Date("2018-03-23 19:00");
 
 // 6 号楼
 var isSix = true;
@@ -98,7 +93,7 @@ function start() {
     timeLeft = timeLeft -TIMER_SLICE;
     if(timeLeft > 120000){
         $(".target_ylp").empty();
-        $(".target_ylp").append("<a href='#' onClick='wkgo()' class='red size24'>"+Math.floor(timeLeft/1000)+"</a>");
+        $(".target_ylp").append("<a href='#' onClick='wkgo()' class='red size24'>"+Math.floor(timeLeft/1000/60)+":"+ Math.floor(timeLeft/1000%60)+"</a>");
     }else if(timeLeft <= 150) {
         wkgo();
     } else if (timeLeft < 50){
@@ -133,6 +128,18 @@ document.addEventListener(
     false
 );
 
+jQuery.expr[':'].regex = function(elem, index, match) {
+    var matchParams = match[3].split(','),
+        validLabels = /^(data|css):/,
+        attr = {
+            method: matchParams[0].match(validLabels) ?
+            matchParams[0].split(':')[0] : 'attr',
+            property: matchParams.shift().replace(validLabels,'')
+        },
+        regexFlags = 'ig',
+        regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
+    return regex.test(jQuery(elem)[attr.method](attr.property));
+};
 
 $(document).ready(syncTime());
 
@@ -170,8 +177,8 @@ $(document).ajaxSuccess(function (event, request, settings){
     }
 
     //step1:
-    if(!step1 && $("a.quick_price").length != 0){
-        $("a.quick_price")[0].click();
+    if(!step1 && $("a:regex(class, quick_price.*)").length != 0){
+        $("a:regex(class, quick_price.*)")[0].click();
         step1 = true;
     }
 
