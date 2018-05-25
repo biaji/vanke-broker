@@ -11,7 +11,10 @@ var wantedList = [2602,2603,1601,3301,2702,2703,2502,2503];
 const TARGET_TIME = new Date("2018-03-23 19:00");
 
 // 6 号楼
-var isSix = true;
+var isSix = false;
+
+// 是否为车位
+var isParking = true;
 
 var roomSelected;
 
@@ -35,7 +38,14 @@ function wkgo() {
     // init
     step1 = false;
     step2 = false;
+	if(isParking){
+		grabParking();
+	}else{
+		grabDorm();
+	}
+}
 
+function grabDorm(){
     var list = $(".status2");
     if (roomSelected) {
         for (var i = 0; i < list.size(); i++) {
@@ -67,6 +77,11 @@ function wkgo() {
             break;
         }
     }
+}
+
+function grabParking(){
+	var list = $(".price_in");
+	list[0].click();
 }
 
 function trimRoomNum(coarse){
@@ -133,7 +148,7 @@ jQuery.expr[':'].regex = function(elem, index, match) {
         validLabels = /^(data|css):/,
         attr = {
             method: matchParams[0].match(validLabels) ?
-            matchParams[0].split(':')[0] : 'attr',
+				matchParams[0].split(':')[0] : 'attr',
             property: matchParams.shift().replace(validLabels,'')
         },
         regexFlags = 'ig',
